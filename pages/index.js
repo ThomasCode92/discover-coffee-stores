@@ -1,7 +1,13 @@
 import Head from 'next/head';
+
+import Banner from '@/components/Banner';
 import styles from '@/styles/Home.module.css';
 
 export default function Home() {
+  const handleClick = () => {
+    console.log('Button Clicked!');
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -11,7 +17,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Coffee Connoisseur</h1>
+        <Banner buttonText={'View stores nearby'} onClick={handleClick} />
       </main>
     </div>
   );
