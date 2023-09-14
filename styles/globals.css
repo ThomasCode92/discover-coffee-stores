@@ -7,6 +7,12 @@ body {
   padding: 0;
   margin: 0;
   font-family: sans-serif;
+  background: url('/background.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #373b64;
+  height: 100%;
 }
 
 a {
