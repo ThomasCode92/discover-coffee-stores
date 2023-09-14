@@ -6,7 +6,7 @@ export default function Banner({ buttonText, onClick }) {
       <h1 className={styles.title}>
         Coffee <span>Connoisseur</span>
       </h1>
-      <p className={styles.subtitle}>Discover your local coffee shops!</p>
+      <p className={styles['sub-title']}>Discover your local coffee shops!</p>
       <button className={styles.button} onClick={onClick}>
         {buttonText}
       </button>
