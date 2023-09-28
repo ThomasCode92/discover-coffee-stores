@@ -13,6 +13,11 @@
   padding-right: 1rem /* 16px */;
 }
 
+.hero-image {
+  position: absolute;
+  top: 0;
+}
+
 /**
   Breakpoints:
   ------------
@@ -44,6 +49,10 @@
 
   .main {
     margin-top: 4rem /* 64px */;
+  }
+
+  .hero-image {
+    right: 20%;
   }
 }
 
