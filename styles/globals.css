@@ -1,3 +1,24 @@
+@font-face {
+  font-family: 'IBMPlexSans';
+  font-style: normal;
+  font-weight: 500;
+  src: url(/fonts/IBMPlexSans-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'IBMPlexSans';
+  font-style: normal;
+  font-weight: 600;
+  src: url(/fonts/IBMPlexSans-SemiBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'IBMPlexSans';
+  font-style: normal;
+  font-weight: 700;
+  src: url(/fonts/IBMPlexSans-Bold.ttf) format('truetype');
+}
+
 :root {
   --text-purple: rgba(67, 56, 202, 1);
   --text-purple-dark: rgba(79, 70, 229, 1);
@@ -11,7 +32,7 @@
 }
 
 body {
-  font-family: sans-serif;
+  font-family: IBMPlexSans, sans-serif;
   background: url('/images/background.png');
   background-position: center;
   background-repeat: no-repeat;
