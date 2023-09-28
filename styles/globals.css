@@ -1,3 +1,24 @@
+@font-face {
+  font-family: 'IBMPlexSans';
+  font-style: normal;
+  font-weight: 500;
+  src: url(/fonts/IBMPlexSans-Regular.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'IBMPlexSans';
+  font-style: normal;
+  font-weight: 600;
+  src: url(/fonts/IBMPlexSans-SemiBold.ttf) format('truetype');
+}
+
+@font-face {
+  font-family: 'IBMPlexSans';
+  font-style: normal;
+  font-weight: 700;
+  src: url(/fonts/IBMPlexSans-Bold.ttf) format('truetype');
+}
+
 :root {
   --text-purple: rgba(67, 56, 202, 1);
   --text-purple-dark: rgba(79, 70, 229, 1);
@@ -7,19 +28,30 @@
 
 * {
   box-sizing: border-box;
+  margin: 0;
 }
 
-html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: sans-serif;
-  background: url('/background.png');
+  font-family: IBMPlexSans, sans-serif;
+  background: url('/images/background.png');
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
   color: #373b64;
-  height: 100%;
+}
+
+p {
+  font-weight: 500;
+}
+
+button {
+  background-color: transparent;
+  background-image: none;
+  font-weight: 600;
+}
+
+button:focus {
+  outline: 1px dotted;
+  outline: 5px auto -webkit-focus-ring-color;
 }
 
 a {
