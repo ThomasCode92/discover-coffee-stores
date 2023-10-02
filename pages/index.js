@@ -1,8 +1,10 @@
 import Head from 'next/head';
+import Image from 'next/image';
 
 import Banner from '@/components/Banner';
+import Card from '@/components/Card';
+
 import styles from '@/styles/Home.module.css';
-import Image from 'next/image';
 
 export default function Home() {
   const handleClick = () => {
@@ -25,6 +27,11 @@ export default function Home() {
           className={styles['hero-image']}
           width={700}
           height={400}
+        />
+        <Card
+          name="DarkHorse Coffee"
+          imageUrl="/images/hero-image.png"
+          href="/coffee-store/darkhorse-coffee"
         />
       </main>
     </div>
