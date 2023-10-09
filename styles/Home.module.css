@@ -18,6 +18,13 @@
   top: 0;
 }
 
+.card-layout {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(20rem, 1fr));
+  column-gap: 1.5rem;
+  row-gap: 1.5rem;
+}
+
 /**
   Breakpoints:
   ------------
@@ -38,6 +45,10 @@
     margin-top: 3rem /* 48px */;
     padding-left: 1.5rem /* 24px */;
     padding-right: 1.5rem /* 24px */;
+  }
+
+  .card-layout {
+    grid-template-columns: repeat(2, minmax(20rem, 1fr));
   }
 }
 
@@ -66,5 +77,9 @@
     margin-top: 5rem /* 80px */;
     padding-left: 2rem /* 32px */;
     padding-right: 2rem /* 32px */;
+  }
+
+  .card-layout {
+    grid-template-columns: repeat(3, minmax(20rem, 1fr));
   }
 }

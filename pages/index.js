@@ -28,11 +28,23 @@ export default function Home() {
           width={700}
           height={400}
         />
-        <Card
-          name="DarkHorse Coffee"
-          imageUrl="/images/hero-image.png"
-          href="/coffee-store/darkhorse-coffee"
-        />
+        <div className={styles['card-layout']}>
+          <Card
+            name="DarkHorse Coffee"
+            imageUrl="/images/hero-image.png"
+            href="/coffee-store/darkhorse-coffee"
+          />
+          <Card
+            name="DarkHorse Coffee"
+            imageUrl="/images/hero-image.png"
+            href="/coffee-store/darkhorse-coffee"
+          />
+          <Card
+            name="DarkHorse Coffee"
+            imageUrl="/images/hero-image.png"
+            href="/coffee-store/darkhorse-coffee"
+          />
+        </div>
       </main>
     </div>
   );
