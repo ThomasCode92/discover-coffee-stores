@@ -1,0 +1,23 @@
+.container {
+  border-radius: 0.75rem /* 12px */;
+  padding: 1rem;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem /* 12px */;
+}
+
+.card-header {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.25rem /* 20px */;
+  line-height: 1.75rem /* 28px */;
+  font-weight: 800;
+  overflow: hidden;
+  width: 16rem /* 256px */;
+}
+
+.card-image {
+  color: var(--text-white-100);
+  border-radius: 0.75rem /* 12px */;
+}
