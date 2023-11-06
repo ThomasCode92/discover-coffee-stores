@@ -8,7 +8,7 @@ import coffeeStores from '@/data/coffee-stores.json';
 
 import styles from '@/styles/Home.module.css';
 
-export default function Home() {
+export default function Home(props) {
   const handleClick = () => {
     console.log('Button Clicked!');
   };
@@ -31,7 +31,7 @@ export default function Home() {
           height={400}
         />
         <div className={styles['card-layout']}>
-          {coffeeStores.map(coffeeStore => {
+          {props.coffeeStores.map(coffeeStore => {
             return (
               <Card
                 key={coffeeStore.id}
@@ -45,4 +45,8 @@ export default function Home() {
       </main>
     </div>
   );
+}
+
+export async function getStaticProps() {
+  return { props: { coffeeStores } };
 }
