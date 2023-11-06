@@ -1,10 +1,11 @@
+import { Fragment } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 
 import Banner from '@/components/Banner';
 import Card from '@/components/Card';
 
-import coffeeStores from '@/data/coffee-stores.json';
+import coffeeStoresData from '@/data/coffee-stores.json';
 
 import styles from '@/styles/Home.module.css';
 
@@ -30,23 +31,28 @@ export default function Home(props) {
           width={700}
           height={400}
         />
-        <div className={styles['card-layout']}>
-          {props.coffeeStores.map(coffeeStore => {
-            return (
-              <Card
-                key={coffeeStore.id}
-                name={coffeeStore.name}
-                imageUrl={coffeeStore.imgUrl}
-                href={`coffee-store/${coffeeStore.id}`}
-              />
-            );
-          })}
-        </div>
+        {props.coffeeStores.length > 0 && (
+          <Fragment>
+            <h2 className={styles['sub-heading']}>Toronto stores</h2>
+            <div className={styles['card-layout']}>
+              {props.coffeeStores.map(coffeeStore => {
+                return (
+                  <Card
+                    key={coffeeStore.id}
+                    name={coffeeStore.name}
+                    imageUrl={coffeeStore.imgUrl}
+                    href={`coffee-store/${coffeeStore.id}`}
+                  />
+                );
+              })}
+            </div>
+          </Fragment>
+        )}
       </main>
     </div>
   );
 }
 
 export async function getStaticProps() {
-  return { props: { coffeeStores } };
+  return { props: { coffeeStores: coffeeStoresData } };
 }

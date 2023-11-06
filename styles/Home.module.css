@@ -18,6 +18,13 @@
   top: 0;
 }
 
+.sub-heading {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  padding: 2rem 0;
+  color: var(--text-white-100);
+}
+
 .card-layout {
   display: grid;
   grid-template-columns: repeat(1, minmax(20rem, 1fr));
