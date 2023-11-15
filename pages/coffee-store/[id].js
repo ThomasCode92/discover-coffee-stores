@@ -1,20 +1,27 @@
+import { Fragment } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import coffeeStoresData from '@/data/coffee-stores.json';
 
 export default function CoffeeStore(props) {
-  const { query, isFallback } = useRouter();
+  const { isFallback } = useRouter();
 
   if (isFallback) return <div>Loading...</div>;
 
+  const { name, address, neighbourhood } = props.coffeeStore;
+
   return (
-    <div>
-      <h1>Coffee Store Page {query.id}</h1>
-      <p>{props.coffeeStore.name}</p>
-      <p>{props.coffeeStore.address}</p>
+    <Fragment>
+      <Head>
+        <title>{name}</title>
+      </Head>
       <Link href="/">Back to Home</Link>
-    </div>
+      <p>{address}</p>
+      <p>{name}</p>
+      <p>{neighbourhood}</p>
+    </Fragment>
   );
 }
 
@@ -27,8 +34,9 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() {
-  return {
-    paths: [{ params: { id: '0' } }, { params: { id: '1' } }],
-    fallback: true,
-  };
+  const paths = coffeeStoresData.map(coffeeStore => {
+    return { params: { id: coffeeStore.id.toString() } };
+  });
+
+  return { paths, fallback: true };
 }
