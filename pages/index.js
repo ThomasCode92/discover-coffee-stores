@@ -54,5 +54,18 @@ export default function Home(props) {
 }
 
 export async function getStaticProps() {
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: process.env.NEXT_FOURSQUARE_PLACES_API_KEY,
+    },
+  };
+
+  fetch('https://api.foursquare.com/v3/places/search', options)
+    .then(response => response.json())
+    .then(response => console.log(response))
+    .catch(err => console.error(err));
+
   return { props: { coffeeStores: coffeeStoresData } };
 }
