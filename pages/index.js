@@ -14,6 +14,8 @@ export default function Home(props) {
     console.log('Button Clicked!');
   };
 
+  console.log(props);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -38,10 +40,13 @@ export default function Home(props) {
               {props.coffeeStores.map(coffeeStore => {
                 return (
                   <Card
-                    key={coffeeStore.id}
+                    key={coffeeStore.fsq_id}
                     name={coffeeStore.name}
-                    imageUrl={coffeeStore.imgUrl}
-                    href={`coffee-store/${coffeeStore.id}`}
+                    imageUrl={
+                      coffeeStore.imgUrl ||
+                      'https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80'
+                    }
+                    href={`coffee-store/${coffeeStore.fsq_id}`}
                   />
                 );
               })}
@@ -54,18 +59,22 @@ export default function Home(props) {
 }
 
 export async function getStaticProps() {
+  const FOURSQUARE_PLACES_API_KEY = process.env.NEXT_FOURSQUARE_PLACES_API_KEY;
+
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: process.env.NEXT_FOURSQUARE_PLACES_API_KEY,
+      Authorization: FOURSQUARE_PLACES_API_KEY,
     },
   };
 
-  fetch('https://api.foursquare.com/v3/places/search', options)
-    .then(response => response.json())
-    .then(response => console.log(response))
-    .catch(err => console.error(err));
+  const foursquarePlacesUrl =
+    'https://api.foursquare.com/v3/places/search?query=coffee&ll=43.68212527466834%2C-79.39961655765684&limit=6';
 
-  return { props: { coffeeStores: coffeeStoresData } };
+  const response = await fetch(foursquarePlacesUrl, options);
+
+  const data = await response.json();
+
+  return { props: { coffeeStores: data.results } };
 }
