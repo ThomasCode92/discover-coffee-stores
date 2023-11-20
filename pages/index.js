@@ -14,8 +14,6 @@ export default function Home(props) {
     console.log('Button Clicked!');
   };
 
-  console.log(props);
-
   return (
     <div className={styles.container}>
       <Head>
@@ -59,13 +57,13 @@ export default function Home(props) {
 }
 
 export async function getStaticProps() {
-  const FOURSQUARE_PLACES_API_KEY = process.env.NEXT_FOURSQUARE_PLACES_API_KEY;
+  const FOURSQUARE_API_KEY = process.env.FOURSQUARE_API_KEY;
 
   const options = {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: FOURSQUARE_PLACES_API_KEY,
+      Authorization: FOURSQUARE_API_KEY,
     },
   };
 
