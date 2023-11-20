@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Banner from '@/components/Banner';
 import Card from '@/components/Card';
 
-import coffeeStoresData from '@/data/coffee-stores.json';
+import { fetchCoffeeStores } from '@/lib/coffee-stores';
 
 import styles from '@/styles/Home.module.css';
 
@@ -57,22 +57,6 @@ export default function Home(props) {
 }
 
 export async function getStaticProps() {
-  const FOURSQUARE_API_KEY = process.env.FOURSQUARE_API_KEY;
-
-  const options = {
-    method: 'GET',
-    headers: {
-      accept: 'application/json',
-      Authorization: FOURSQUARE_API_KEY,
-    },
-  };
-
-  const foursquarePlacesUrl =
-    'https://api.foursquare.com/v3/places/search?query=coffee&ll=43.68212527466834%2C-79.39961655765684&limit=6';
-
-  const response = await fetch(foursquarePlacesUrl, options);
-
-  const data = await response.json();
-
-  return { props: { coffeeStores: data.results } };
+  const coffeeStores = await fetchCoffeeStores();
+  return { props: { coffeeStores } };
 }
