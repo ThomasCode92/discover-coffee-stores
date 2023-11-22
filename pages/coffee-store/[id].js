@@ -1,13 +1,13 @@
+import { Fragment } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
+import { fetchCoffeeStores } from '@/lib/coffee-stores';
+
 import cls from 'classnames';
 import styles from '@/styles/Coffee-Store.module.css';
-
-import coffeeStoresData from '@/data/coffee-stores.json';
-import { Fragment } from 'react';
 
 export default function CoffeeStore(props) {
   const { isFallback } = useRouter();
@@ -30,7 +30,10 @@ export default function CoffeeStore(props) {
           <Link href="/">Back to Home</Link>
           <p className={styles['coffee-store-title']}>{name}</p>
           <Image
-            src={imgUrl}
+            src={
+              imgUrl ||
+              'https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80'
+            }
             width={600}
             height={360}
             alt={name}
@@ -75,16 +78,20 @@ export default function CoffeeStore(props) {
 }
 
 export async function getStaticProps({ params }) {
-  const coffeeStore = coffeeStoresData.find(
-    coffeeStore => coffeeStore.id === Number(params.id)
+  const coffeeStores = await fetchCoffeeStores();
+
+  const coffeeStore = coffeeStores.find(
+    coffeeStore => coffeeStore.fsq_id === params.id
   );
 
   return { props: { coffeeStore } };
 }
 
 export async function getStaticPaths() {
-  const paths = coffeeStoresData.map(coffeeStore => {
-    return { params: { id: coffeeStore.id.toString() } };
+  const coffeeStores = await fetchCoffeeStores();
+
+  const paths = coffeeStores.map(coffeeStore => {
+    return { params: { id: coffeeStore.fsq_id } };
   });
 
   return { paths, fallback: true };
