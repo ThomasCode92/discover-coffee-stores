@@ -14,7 +14,8 @@ export default function CoffeeStore(props) {
 
   if (isFallback) return <div>Loading...</div>;
 
-  const { name, address, neighbourhood, imgUrl } = props.coffeeStore;
+  const { name, location, imgUrl } = props.coffeeStore;
+  const { address, neighborhood, locality } = location;
 
   const upvoteBtnHandler = () => {
     console.log('handle upvote');
@@ -57,7 +58,7 @@ export default function CoffeeStore(props) {
               height={24}
               alt="neighbourhood-icon"
             />
-            <p>{neighbourhood}</p>
+            <p>{neighborhood ? `${neighborhood[0]}, ${locality}` : locality}</p>
           </div>
           <div className={styles['detail-line']}>
             <Image
