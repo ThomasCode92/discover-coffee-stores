@@ -1,10 +1,15 @@
+import { Fragment } from 'react';
 import Head from 'next/head';
-
-import Banner from '@/components/Banner';
-import styles from '@/styles/Home.module.css';
 import Image from 'next/image';
 
-export default function Home() {
+import Banner from '@/components/Banner';
+import Card from '@/components/Card';
+
+import { fetchCoffeeStores } from '@/lib/coffee-stores';
+
+import styles from '@/styles/Home.module.css';
+
+export default function Home(props) {
   const handleClick = () => {
     console.log('Button Clicked!');
   };
@@ -26,7 +31,29 @@ export default function Home() {
           width={700}
           height={400}
         />
+        {props.coffeeStores.length > 0 && (
+          <Fragment>
+            <h2 className={styles['sub-heading']}>Toronto stores</h2>
+            <div className={styles['card-layout']}>
+              {props.coffeeStores.map(coffeeStore => {
+                return (
+                  <Card
+                    key={coffeeStore.id}
+                    name={coffeeStore.name}
+                    imageUrl={coffeeStore.imgUrl}
+                    href={`coffee-store/${coffeeStore.id}`}
+                  />
+                );
+              })}
+            </div>
+          </Fragment>
+        )}
       </main>
     </div>
   );
+}
+
+export async function getStaticProps() {
+  const coffeeStores = await fetchCoffeeStores();
+  return { props: { coffeeStores } };
 }
