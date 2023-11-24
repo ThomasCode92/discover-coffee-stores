@@ -14,8 +14,7 @@ export default function CoffeeStore(props) {
 
   if (isFallback) return <div>Loading...</div>;
 
-  const { name, location, imgUrl } = props.coffeeStore;
-  const { address, neighborhood, locality } = location;
+  const { name, address, neighborhood, imgUrl } = props.coffeeStore;
 
   const upvoteBtnHandler = () => {
     console.log('handle upvote');
@@ -28,13 +27,10 @@ export default function CoffeeStore(props) {
       </Head>
       <div className={styles.container}>
         <div className={styles['coffee-store-info']}>
-          <Link href="/">Back to Home</Link>
+          <Link href="/">← Back to Home</Link>
           <p className={styles['coffee-store-title']}>{name}</p>
           <Image
-            src={
-              imgUrl ||
-              'https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80'
-            }
+            src={imgUrl}
             width={600}
             height={360}
             alt={name}
@@ -56,9 +52,9 @@ export default function CoffeeStore(props) {
               src="/icons/near-me.svg"
               width={24}
               height={24}
-              alt="neighbourhood-icon"
+              alt="neighborhood-icon"
             />
-            <p>{neighborhood ? `${neighborhood[0]}, ${locality}` : locality}</p>
+            <p>{neighborhood}</p>
           </div>
           <div className={styles['detail-line']}>
             <Image
@@ -82,7 +78,7 @@ export async function getStaticProps({ params }) {
   const coffeeStores = await fetchCoffeeStores();
 
   const coffeeStore = coffeeStores.find(
-    coffeeStore => coffeeStore.fsq_id === params.id
+    coffeeStore => coffeeStore.id === params.id
   );
 
   return { props: { coffeeStore } };
@@ -92,7 +88,7 @@ export async function getStaticPaths() {
   const coffeeStores = await fetchCoffeeStores();
 
   const paths = coffeeStores.map(coffeeStore => {
-    return { params: { id: coffeeStore.fsq_id } };
+    return { params: { id: coffeeStore.id } };
   });
 
   return { paths, fallback: true };
