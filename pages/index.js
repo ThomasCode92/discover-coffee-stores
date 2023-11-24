@@ -5,13 +5,17 @@ import Image from 'next/image';
 import Banner from '@/components/Banner';
 import Card from '@/components/Card';
 
+import useTrackLocation from '@/hooks/use-track-location';
 import { fetchCoffeeStores } from '@/lib/coffee-stores';
 
 import styles from '@/styles/Home.module.css';
 
 export default function Home(props) {
-  const handleClick = () => {
-    console.log('Button Clicked!');
+  const { latLong, isFindingLocation, locationError, handleTrackLocation } =
+    useTrackLocation();
+
+  const clickHandler = () => {
+    handleTrackLocation();
   };
 
   return (
@@ -21,9 +25,12 @@ export default function Home(props) {
         <meta name="description" content="Find the best coffee shops" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
       <main className={styles.main}>
-        <Banner buttonText={'View stores nearby'} onClick={handleClick} />
+        <Banner
+          buttonText={isFindingLocation ? 'Locating...' : 'View stores nearby'}
+          errorMessage={locationError}
+          onClick={clickHandler}
+        />
         <Image
           src="/images/hero-image.png"
           alt=""
