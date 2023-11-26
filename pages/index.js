@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 
@@ -13,6 +13,21 @@ import styles from '@/styles/Home.module.css';
 export default function Home(props) {
   const { latLong, isFindingLocation, locationError, handleTrackLocation } =
     useTrackLocation();
+
+  useEffect(() => {
+    async function setCoffeeStoresByLocation() {
+      if (!latLong) return;
+
+      try {
+        const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 10);
+        console.log(fetchedCoffeeStores);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    setCoffeeStoresByLocation();
+  }, [latLong]);
 
   const clickHandler = () => {
     handleTrackLocation();
