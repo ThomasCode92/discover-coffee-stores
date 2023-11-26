@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 
@@ -11,6 +11,9 @@ import { fetchCoffeeStores } from '@/lib/coffee-stores';
 import styles from '@/styles/Home.module.css';
 
 export default function Home(props) {
+  const [coffeeStores, setCoffeeStores] = useState([]);
+  const [error, setError] = useState(null);
+
   const { latLong, isFindingLocation, locationError, handleTrackLocation } =
     useTrackLocation();
 
@@ -20,9 +23,10 @@ export default function Home(props) {
 
       try {
         const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 10);
-        console.log(fetchedCoffeeStores);
+        setCoffeeStores(fetchedCoffeeStores);
       } catch (error) {
         console.error(error);
+        setError(error);
       }
     }
 
@@ -43,7 +47,7 @@ export default function Home(props) {
       <main className={styles.main}>
         <Banner
           buttonText={isFindingLocation ? 'Locating...' : 'View stores nearby'}
-          errorMessage={locationError}
+          errorMessage={locationError || (error && error.message)}
           onClick={clickHandler}
         />
         <Image
@@ -53,6 +57,23 @@ export default function Home(props) {
           width={700}
           height={400}
         />
+        {coffeeStores.length > 0 && (
+          <Fragment>
+            <h2 className={styles['sub-heading']}>Stores near me</h2>
+            <div className={styles['card-layout']}>
+              {coffeeStores.map(coffeeStore => {
+                return (
+                  <Card
+                    key={coffeeStore.id}
+                    name={coffeeStore.name}
+                    imageUrl={coffeeStore.imgUrl}
+                    href={`coffee-store/${coffeeStore.id}`}
+                  />
+                );
+              })}
+            </div>
+          </Fragment>
+        )}
         {props.coffeeStores.length > 0 && (
           <Fragment>
             <h2 className={styles['sub-heading']}>Toronto stores</h2>
