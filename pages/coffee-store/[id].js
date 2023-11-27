@@ -1,20 +1,35 @@
-import { Fragment } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 
+import { CoffeeStoreContext } from '@/context/coffee-stores';
 import { fetchCoffeeStores } from '@/lib/coffee-stores';
+import { isEmpty } from '@/utils/helpers';
 
 import cls from 'classnames';
 import styles from '@/styles/Coffee-Store.module.css';
 
-export default function CoffeeStore(props) {
-  const { isFallback } = useRouter();
+export default function CoffeeStore(initialProps) {
+  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+  const { isFallback, query } = useRouter();
+
+  const { state } = useContext(CoffeeStoreContext);
+
+  useEffect(() => {
+    if (isEmpty(coffeeStore) && state.coffeeStores.length > 0) {
+      const coffeeStore = state.coffeeStores.find(
+        coffeeStore => coffeeStore.id === query.id
+      );
+
+      setCoffeeStore(coffeeStore);
+    }
+  }, [coffeeStore, query.id, state.coffeeStores]);
 
   if (isFallback) return <div>Loading...</div>;
 
-  const { name, address, neighborhood, imgUrl } = props.coffeeStore;
+  const { name, address, neighborhood, imgUrl } = coffeeStore;
 
   const upvoteBtnHandler = () => {
     console.log('handle upvote');
@@ -30,7 +45,10 @@ export default function CoffeeStore(props) {
           <Link href="/">← Back to Home</Link>
           <p className={styles['coffee-store-title']}>{name}</p>
           <Image
-            src={imgUrl}
+            src={
+              imgUrl ||
+              'https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80'
+            }
             width={600}
             height={360}
             alt={name}
@@ -81,7 +99,7 @@ export async function getStaticProps({ params }) {
     coffeeStore => coffeeStore.id === params.id
   );
 
-  return { props: { coffeeStore } };
+  return { props: { coffeeStore: coffeeStore ?? {} } };
 }
 
 export async function getStaticPaths() {

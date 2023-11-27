@@ -1,6 +1,6 @@
 import styles from './Banner.module.css';
 
-export default function Banner({ buttonText, onClick }) {
+export default function Banner({ buttonText, errorMessage, onClick }) {
   return (
     <header className={styles.container}>
       <h1 className={styles.title}>
@@ -12,6 +12,7 @@ export default function Banner({ buttonText, onClick }) {
           {buttonText}
         </button>
       </div>
+      {errorMessage && <p>Something went wrong: {errorMessage}</p>}
     </header>
   );
 }
