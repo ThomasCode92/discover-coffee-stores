@@ -1,13 +1,18 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { ACTION_TYPES, CoffeeStoreContext } from '@/context/coffee-stores';
 
 export default function useTrackLocation() {
-  const [latLong, setLatLong] = useState('');
   const [isFindingLocation, setIsFindingLocation] = useState(false);
   const [locationError, setLocationError] = useState('');
 
+  const { dispatch } = useContext(CoffeeStoreContext);
+
   const onSuccess = position => {
     const { latitude, longitude } = position.coords;
-    setLatLong(`${latitude},${longitude}`);
+    const latLong = `${latitude},${longitude}`;
+
+    dispatch({ type: ACTION_TYPES.SET_LAT_LONG, payload: { latLong } });
+
     setIsFindingLocation(false);
     setLocationError('');
   };
@@ -28,5 +33,5 @@ export default function useTrackLocation() {
     navigator.geolocation.getCurrentPosition(onSuccess, onError);
   };
 
-  return { latLong, isFindingLocation, locationError, handleTrackLocation };
+  return { isFindingLocation, locationError, handleTrackLocation };
 }

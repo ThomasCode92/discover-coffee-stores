@@ -20,7 +20,10 @@ const coffeeStoreReducer = (state, action) => {
   }
 };
 
-export const CoffeeStoreContext = createContext();
+export const CoffeeStoreContext = createContext({
+  state: { latLong: '', coffeeStores: [] },
+  dispatch: () => {},
+});
 
 export default function CoffeeStoreProvider({ children }) {
   const [state, dispatch] = useReducer(coffeeStoreReducer, initialState);

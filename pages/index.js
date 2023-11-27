@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 
@@ -6,24 +6,30 @@ import Banner from '@/components/Banner';
 import Card from '@/components/Card';
 
 import useTrackLocation from '@/hooks/use-track-location';
+import { ACTION_TYPES, CoffeeStoreContext } from '@/context/coffee-stores';
 import { fetchCoffeeStores } from '@/lib/coffee-stores';
 
 import styles from '@/styles/Home.module.css';
 
 export default function Home(props) {
-  const [coffeeStores, setCoffeeStores] = useState([]);
   const [error, setError] = useState(null);
 
-  const { latLong, isFindingLocation, locationError, handleTrackLocation } =
+  const { state, dispatch } = useContext(CoffeeStoreContext);
+
+  const { isFindingLocation, locationError, handleTrackLocation } =
     useTrackLocation();
 
   useEffect(() => {
     async function setCoffeeStoresByLocation() {
-      if (!latLong) return;
+      if (!state.latLong) return;
 
       try {
-        const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 10);
-        setCoffeeStores(fetchedCoffeeStores);
+        const fetchedCoffeeStores = await fetchCoffeeStores(state.latLong, 10);
+
+        dispatch({
+          type: ACTION_TYPES.SET_COFFEE_STORES,
+          payload: { coffeeStores: fetchedCoffeeStores },
+        });
       } catch (error) {
         console.error(error);
         setError(error);
@@ -31,11 +37,7 @@ export default function Home(props) {
     }
 
     setCoffeeStoresByLocation();
-  }, [latLong]);
-
-  const clickHandler = () => {
-    handleTrackLocation();
-  };
+  }, [dispatch, state.latLong]);
 
   return (
     <div className={styles.container}>
@@ -48,7 +50,7 @@ export default function Home(props) {
         <Banner
           buttonText={isFindingLocation ? 'Locating...' : 'View stores nearby'}
           errorMessage={locationError || (error && error.message)}
-          onClick={clickHandler}
+          onClick={handleTrackLocation}
         />
         <Image
           src="/images/hero-image.png"
@@ -57,11 +59,11 @@ export default function Home(props) {
           width={700}
           height={400}
         />
-        {coffeeStores.length > 0 && (
+        {state.coffeeStores.length > 0 && (
           <Fragment>
             <h2 className={styles['sub-heading']}>Stores near me</h2>
             <div className={styles['card-layout']}>
-              {coffeeStores.map(coffeeStore => {
+              {state.coffeeStores.map(coffeeStore => {
                 return (
                   <Card
                     key={coffeeStore.id}
