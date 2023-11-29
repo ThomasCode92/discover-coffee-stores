@@ -24,11 +24,14 @@ export default function Home(props) {
       if (!state.latLong) return;
 
       try {
-        const fetchedCoffeeStores = await fetchCoffeeStores(state.latLong, 10);
+        const getCoffeeStoresApiUrl = `/api/getCoffeeStoresByLocation?latLong=${state.latLong}`;
+
+        const response = await fetch(getCoffeeStoresApiUrl);
+        const data = await response.json();
 
         dispatch({
           type: ACTION_TYPES.SET_COFFEE_STORES,
-          payload: { coffeeStores: fetchedCoffeeStores },
+          payload: { coffeeStores: data.coffeeStores },
         });
       } catch (error) {
         console.error(error);
