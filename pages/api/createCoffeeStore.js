@@ -8,8 +8,19 @@ Airtable.configure({
 const base = Airtable.base(process.env.AIRTABLE_BASE_ID);
 const table = base('coffee-stores');
 
-export default function createCoffeeStore(req, res) {
+export default async function createCoffeeStore(req, res) {
   if (req.method === 'POST') {
+    const existingCoffeeStore = await table
+      .select({ filterByFormula: `id="0"` })
+      .firstPage();
+
+    if (existingCoffeeStore && existingCoffeeStore.length > 0) {
+      return res.status(200).json({
+        message: 'Coffee store already exists',
+        data: existingCoffeeStore,
+      });
+    }
+
     return res.json({ message: 'Creating a coffee store' });
   }
 
