@@ -11,8 +11,10 @@ const table = base('coffee-stores');
 export default async function createCoffeeStore(req, res) {
   try {
     if (req.method === 'POST') {
+      const { id, ...coffeeStoreData } = req.body;
+
       const existingCoffeeStores = await table
-        .select({ filterByFormula: `id="1"` })
+        .select({ filterByFormula: `id="${id}"` })
         .firstPage();
 
       if (existingCoffeeStores && existingCoffeeStores.length > 0) {
@@ -23,16 +25,7 @@ export default async function createCoffeeStore(req, res) {
       }
 
       const createdRecords = await table.create([
-        {
-          fields: {
-            id: '1',
-            name: 'Coffee Store',
-            address: '1234 Coffee Street, Coffee City',
-            neighborhood: 'Coffee Neighborhood',
-            voting: 200,
-            imgUrl: 'https://images.unsplash.com/photo-1562887109-8f5b8a5e3a5b',
-          },
-        },
+        { fields: { id, ...coffeeStoreData } },
       ]);
 
       return res.status(201).json({
@@ -40,8 +33,6 @@ export default async function createCoffeeStore(req, res) {
         data: createdRecords[0].fields,
       });
     }
-
-    return res.json({ message: 'Hello World' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Something went wrong', error });
