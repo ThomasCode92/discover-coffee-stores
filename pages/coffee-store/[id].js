@@ -15,8 +15,6 @@ export default function CoffeeStore(initialProps) {
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
   const { isFallback, query } = useRouter();
 
-  console.log('coffeeStore', coffeeStore);
-
   const { state } = useContext(CoffeeStoreContext);
 
   const handleCreateCoffeeStore = useCallback(async coffeeStoreData => {
@@ -28,7 +26,7 @@ export default function CoffeeStore(initialProps) {
       });
 
       const data = await response.json();
-      console.log('data', data);
+      console.log(data);
     } catch (error) {
       console.error('Error creating coffee store');
       console.error(error);
@@ -45,8 +43,16 @@ export default function CoffeeStore(initialProps) {
 
       setCoffeeStore(coffeeStore);
       handleCreateCoffeeStore(coffeeStore);
+    } else {
+      handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [coffeeStore, handleCreateCoffeeStore, query.id, state.coffeeStores]);
+  }, [
+    coffeeStore,
+    handleCreateCoffeeStore,
+    initialProps.coffeeStore,
+    query.id,
+    state.coffeeStores,
+  ]);
 
   if (isFallback) return <div>Loading...</div>;
 
