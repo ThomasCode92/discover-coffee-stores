@@ -17,6 +17,15 @@ export default function CoffeeStore(initialProps) {
 
   const { state } = useContext(CoffeeStoreContext);
 
+  const handleCreateCoffeeStore = async () => {
+    try {
+      const response = await fetch('/api/createCoffeeStore');
+    } catch (error) {
+      console.error('Error creating coffee store');
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (isEmpty(coffeeStore) && state.coffeeStores.length > 0) {
       const coffeeStore = state.coffeeStores.find(
