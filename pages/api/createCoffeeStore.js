@@ -11,18 +11,34 @@ const table = base('coffee-stores');
 export default async function createCoffeeStore(req, res) {
   try {
     if (req.method === 'POST') {
-      const existingCoffeeStore = await table
-        .select({ filterByFormula: `id="0"` })
+      const existingCoffeeStores = await table
+        .select({ filterByFormula: `id="1"` })
         .firstPage();
 
-      if (existingCoffeeStore && existingCoffeeStore.length > 0) {
+      if (existingCoffeeStores && existingCoffeeStores.length > 0) {
         return res.status(200).json({
           message: 'Coffee store already exists',
-          data: existingCoffeeStore[0].fields,
+          data: existingCoffeeStores[0].fields,
         });
       }
 
-      return res.json({ message: 'Creating a coffee store' });
+      const createdRecords = await table.create([
+        {
+          fields: {
+            id: '1',
+            name: 'Coffee Store',
+            address: '1234 Coffee Street, Coffee City',
+            neighborhood: 'Coffee Neighborhood',
+            voting: 200,
+            imgUrl: 'https://images.unsplash.com/photo-1562887109-8f5b8a5e3a5b',
+          },
+        },
+      ]);
+
+      return res.status(201).json({
+        message: 'Created a coffee store successfully',
+        data: createdRecords[0].fields,
+      });
     }
 
     return res.json({ message: 'Hello World' });
