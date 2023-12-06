@@ -1,14 +1,14 @@
-import { Fragment, useContext, useEffect, useState } from 'react';
+import { Fragment, useCallback, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import cls from 'classnames';
 
 import { CoffeeStoreContext } from '@/context/coffee-stores';
 import { fetchCoffeeStores } from '@/lib/coffee-stores';
 import { isEmpty } from '@/utils/helpers';
 
-import cls from 'classnames';
 import styles from '@/styles/Coffee-Store.module.css';
 
 export default function CoffeeStore(initialProps) {
@@ -17,15 +17,42 @@ export default function CoffeeStore(initialProps) {
 
   const { state } = useContext(CoffeeStoreContext);
 
+  const handleCreateCoffeeStore = useCallback(async coffeeStoreData => {
+    try {
+      const response = await fetch('/api/createCoffeeStore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...coffeeStoreData, voting: 0 }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error('Error creating coffee store');
+      console.error(error);
+    }
+  }, []);
+
   useEffect(() => {
     if (isEmpty(coffeeStore) && state.coffeeStores.length > 0) {
       const coffeeStore = state.coffeeStores.find(
         coffeeStore => coffeeStore.id === query.id
       );
 
+      if (!coffeeStore) return;
+
       setCoffeeStore(coffeeStore);
+      handleCreateCoffeeStore(coffeeStore);
+    } else {
+      handleCreateCoffeeStore(initialProps.coffeeStore);
     }
-  }, [coffeeStore, query.id, state.coffeeStores]);
+  }, [
+    coffeeStore,
+    handleCreateCoffeeStore,
+    initialProps.coffeeStore,
+    query.id,
+    state.coffeeStores,
+  ]);
 
   if (isFallback) return <div>Loading...</div>;
 
