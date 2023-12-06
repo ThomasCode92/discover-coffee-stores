@@ -1,12 +1,4 @@
-import Airtable from 'airtable';
-
-Airtable.configure({
-  endpointUrl: 'https://api.airtable.com',
-  apiKey: process.env.AIRTABLE_API_KEY,
-});
-
-const base = Airtable.base(process.env.AIRTABLE_BASE_ID);
-const table = base('coffee-stores');
+import { table, getMinifiedRecords } from '@/lib/airtable';
 
 export default async function createCoffeeStore(req, res) {
   if (req.method === 'POST') {
@@ -23,7 +15,7 @@ export default async function createCoffeeStore(req, res) {
       if (existingCoffeeStores && existingCoffeeStores.length > 0) {
         return res.status(200).json({
           message: 'Coffee store already exists',
-          data: existingCoffeeStores[0].fields,
+          data: getMinifiedRecords(existingCoffeeStores),
         });
       }
 
@@ -39,7 +31,7 @@ export default async function createCoffeeStore(req, res) {
 
       return res.status(201).json({
         message: 'Created a coffee store successfully',
-        data: createdRecords[0].fields,
+        data: getMinifiedRecords(createdRecords),
       });
     } catch (error) {
       console.error(error);
