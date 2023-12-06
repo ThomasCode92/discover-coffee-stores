@@ -9,9 +9,12 @@ const base = Airtable.base(process.env.AIRTABLE_BASE_ID);
 const table = base('coffee-stores');
 
 export default async function createCoffeeStore(req, res) {
-  try {
-    if (req.method === 'POST') {
-      const { id, ...coffeeStoreData } = req.body;
+  if (req.method === 'POST') {
+    const { id, ...coffeeStoreData } = req.body;
+    try {
+      if (!id) {
+        return res.status(400).json({ message: 'Coffee store id is required' });
+      }
 
       const existingCoffeeStores = await table
         .select({ filterByFormula: `id="${id}"` })
@@ -24,6 +27,12 @@ export default async function createCoffeeStore(req, res) {
         });
       }
 
+      if (!coffeeStoreData.name) {
+        return res
+          .status(400)
+          .json({ message: 'Coffee store name is required' });
+      }
+
       const createdRecords = await table.create([
         { fields: { id, ...coffeeStoreData } },
       ]);
@@ -32,9 +41,9 @@ export default async function createCoffeeStore(req, res) {
         message: 'Created a coffee store successfully',
         data: createdRecords[0].fields,
       });
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Something went wrong', error });
     }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Something went wrong', error });
   }
 }
