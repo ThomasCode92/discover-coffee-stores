@@ -13,6 +13,8 @@ import styles from '@/styles/Coffee-Store.module.css';
 
 export default function CoffeeStore(initialProps) {
   const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+  const [votingCount, setVotingCount] = useState(0);
+
   const { isFallback, query } = useRouter();
 
   const { state } = useContext(CoffeeStoreContext);
@@ -60,6 +62,7 @@ export default function CoffeeStore(initialProps) {
 
   const upvoteBtnHandler = () => {
     console.log('handle upvote');
+    setVotingCount(prevCount => prevCount + 1);
   };
 
   return (
@@ -108,7 +111,7 @@ export default function CoffeeStore(initialProps) {
               height={24}
               alt="upvote-icon"
             />
-            <p>1</p>
+            <p>{votingCount}</p>
           </div>
           <button className={styles['upvote-btn']} onClick={upvoteBtnHandler}>
             Up vote!
