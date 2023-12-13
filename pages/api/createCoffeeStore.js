@@ -1,28 +1,25 @@
-import { table, getMinifiedRecords } from '@/lib/airtable';
+import { table, getMinifiedRecords, findRecordsById } from '@/lib/airtable';
 
 export default async function createCoffeeStore(req, res) {
   if (req.method === 'POST') {
     const { id, ...coffeeStoreData } = req.body;
+
+    if (!id) {
+      return res.status(400).json({ message: 'Coffee store id is required' });
+    }
+
+    if (!coffeeStoreData.name) {
+      return res.status(400).json({ message: 'Coffee store name is required' });
+    }
+
     try {
-      if (!id) {
-        return res.status(400).json({ message: 'Coffee store id is required' });
-      }
+      const existingCoffeeStores = await findRecordsById(id);
 
-      const existingCoffeeStores = await table
-        .select({ filterByFormula: `id="${id}"` })
-        .firstPage();
-
-      if (existingCoffeeStores && existingCoffeeStores.length > 0) {
+      if (existingCoffeeStores.length > 0) {
         return res.status(200).json({
           message: 'Coffee store already exists',
-          data: getMinifiedRecords(existingCoffeeStores),
+          data: existingCoffeeStores,
         });
-      }
-
-      if (!coffeeStoreData.name) {
-        return res
-          .status(400)
-          .json({ message: 'Coffee store name is required' });
       }
 
       const createdRecords = await table.create([
