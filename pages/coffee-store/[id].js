@@ -36,6 +36,8 @@ export default function CoffeeStore(initialProps) {
   }, []);
 
   useEffect(() => {
+    const { coffeeStore } = initialProps;
+
     if (isEmpty(coffeeStore) && state.coffeeStores.length > 0) {
       const coffeeStore = state.coffeeStores.find(
         coffeeStore => coffeeStore.id === query.id
@@ -46,15 +48,9 @@ export default function CoffeeStore(initialProps) {
       setCoffeeStore(coffeeStore);
       handleCreateCoffeeStore(coffeeStore);
     } else {
-      handleCreateCoffeeStore(initialProps.coffeeStore);
+      handleCreateCoffeeStore(coffeeStore);
     }
-  }, [
-    coffeeStore,
-    handleCreateCoffeeStore,
-    initialProps.coffeeStore,
-    query.id,
-    state.coffeeStores,
-  ]);
+  }, [handleCreateCoffeeStore, initialProps, query.id, state.coffeeStores]);
 
   if (isFallback) return <div>Loading...</div>;
 
