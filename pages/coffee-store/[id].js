@@ -3,11 +3,12 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import useSWR from 'swr';
 import cls from 'classnames';
 
 import { CoffeeStoreContext } from '@/context/coffee-stores';
 import { fetchCoffeeStores } from '@/lib/coffee-stores';
-import { isEmpty } from '@/utils/helpers';
+import { fetcher, isEmpty } from '@/utils/helpers';
 
 import styles from '@/styles/Coffee-Store.module.css';
 
@@ -18,6 +19,11 @@ export default function CoffeeStore(initialProps) {
   const { isFallback, query } = useRouter();
 
   const { state } = useContext(CoffeeStoreContext);
+
+  const { data, isLoading, error } = useSWR(
+    `/api/getCoffeeStoreById?id=${query.id}`,
+    fetcher
+  );
 
   const handleCreateCoffeeStore = useCallback(async coffeeStoreData => {
     try {
@@ -52,7 +58,19 @@ export default function CoffeeStore(initialProps) {
     }
   }, [handleCreateCoffeeStore, initialProps, query.id, state.coffeeStores]);
 
-  if (isFallback) return <div>Loading...</div>;
+  useEffect(() => {
+    if (!data) return;
+
+    const { data: coffeeStoreData } = data;
+
+    if (coffeeStoreData && coffeeStoreData.length > 0) {
+      const coffeeStore = coffeeStoreData[0];
+      setVotingCount(coffeeStore.voting);
+      setCoffeeStore(coffeeStore);
+    }
+  }, [data]);
+
+  if (isFallback || isLoading) return <div>Loading...</div>;
 
   const { name, address, neighborhood, imgUrl } = coffeeStore;
 
@@ -60,6 +78,8 @@ export default function CoffeeStore(initialProps) {
     console.log('handle upvote');
     setVotingCount(prevCount => prevCount + 1);
   };
+
+  if (error) return <div>Something went wrong!</div>;
 
   return (
     <Fragment>
