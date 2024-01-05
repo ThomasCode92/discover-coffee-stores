@@ -1,4 +1,4 @@
-import { findRecordsById } from '@/lib/airtable';
+import { findRecordsById, table } from '@/lib/airtable';
 
 export default async function favoriteCoffeeStore(req, res) {
   if (req.method !== 'PUT')
@@ -16,8 +16,16 @@ export default async function favoriteCoffeeStore(req, res) {
       return res.status(404).json({ message: 'Coffee store not found' });
     }
 
+    const existingCoffeeStore = existingCoffeeStores[0];
+    const newVoting = parseInt(existingCoffeeStore.voting) + 1;
+
+    const updatedRecord = await table.update([
+      { id, fields: { voting: newVoting } },
+    ]);
+
     return res.status(200).json({
       message: 'Favorite coffee store successfully',
+      data: updatedRecord,
     });
   } catch (error) {
     console.error(error);
