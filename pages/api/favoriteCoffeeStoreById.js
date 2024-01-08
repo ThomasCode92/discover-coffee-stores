@@ -1,4 +1,4 @@
-import { findRecordsById, table } from '@/lib/airtable';
+import { findRecordsById, getMinifiedRecords, table } from '@/lib/airtable';
 
 export default async function favoriteCoffeeStore(req, res) {
   if (req.method !== 'PUT')
@@ -20,12 +20,12 @@ export default async function favoriteCoffeeStore(req, res) {
     const newVoting = parseInt(existingCoffeeStore.voting) + 1;
 
     const updatedRecord = await table.update([
-      { id, fields: { voting: newVoting } },
+      { id: existingCoffeeStore.recordId, fields: { voting: newVoting } },
     ]);
 
     return res.status(200).json({
       message: 'Favorite coffee store successfully',
-      data: updatedRecord,
+      data: getMinifiedRecords(updatedRecord),
     });
   } catch (error) {
     console.error(error);
