@@ -74,9 +74,26 @@ export default function CoffeeStore(initialProps) {
 
   const { name, address, neighborhood, imgUrl } = coffeeStore;
 
-  const upvoteBtnHandler = () => {
+  const upvoteBtnHandler = async () => {
     console.log('handle upvote');
-    setVotingCount(prevCount => prevCount + 1);
+
+    try {
+      const response = await fetch('/api/favoriteCoffeeStoreById', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: query.id }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (!data && !data.data.length > 0) return;
+
+      setVotingCount(prevCount => prevCount + 1);
+    } catch (error) {
+      console.error('Error upvoting coffee store');
+      console.error(error);
+    }
   };
 
   if (error) return <div>Something went wrong!</div>;
