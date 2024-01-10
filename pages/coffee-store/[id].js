@@ -13,7 +13,9 @@ import { fetcher, isEmpty } from '@/utils/helpers';
 import styles from '@/styles/Coffee-Store.module.css';
 
 export default function CoffeeStore(initialProps) {
-  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+  const [coffeeStore, setCoffeeStore] = useState(
+    initialProps.coffeeStore ?? {}
+  );
   const [votingCount, setVotingCount] = useState(0);
 
   const { isFallback, query } = useRouter();
@@ -27,14 +29,11 @@ export default function CoffeeStore(initialProps) {
 
   const handleCreateCoffeeStore = useCallback(async coffeeStoreData => {
     try {
-      const response = await fetch('/api/createCoffeeStore', {
+      await fetch('/api/createCoffeeStore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...coffeeStoreData, voting: 0 }),
       });
-
-      const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.error('Error creating coffee store');
       console.error(error);
@@ -43,6 +42,8 @@ export default function CoffeeStore(initialProps) {
 
   useEffect(() => {
     const { coffeeStore } = initialProps;
+
+    if (!coffeeStore) return;
 
     if (isEmpty(coffeeStore) && state.coffeeStores.length > 0) {
       const coffeeStore = state.coffeeStores.find(
@@ -75,8 +76,6 @@ export default function CoffeeStore(initialProps) {
   const { name, address, neighborhood, imgUrl } = coffeeStore;
 
   const upvoteBtnHandler = async () => {
-    console.log('handle upvote');
-
     try {
       const response = await fetch('/api/favoriteCoffeeStoreById', {
         method: 'PUT',
@@ -85,7 +84,6 @@ export default function CoffeeStore(initialProps) {
       });
 
       const data = await response.json();
-      console.log(data);
 
       if (!data && !data.data.length > 0) return;
 
