@@ -3,30 +3,37 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
+import useSWR from 'swr';
 import cls from 'classnames';
 
 import { CoffeeStoreContext } from '@/context/coffee-stores';
 import { fetchCoffeeStores } from '@/lib/coffee-stores';
-import { isEmpty } from '@/utils/helpers';
+import { fetcher, isEmpty } from '@/utils/helpers';
 
 import styles from '@/styles/Coffee-Store.module.css';
 
 export default function CoffeeStore(initialProps) {
-  const [coffeeStore, setCoffeeStore] = useState(initialProps.coffeeStore);
+  const [coffeeStore, setCoffeeStore] = useState(
+    initialProps.coffeeStore ?? {}
+  );
+  const [votingCount, setVotingCount] = useState(0);
+
   const { isFallback, query } = useRouter();
 
   const { state } = useContext(CoffeeStoreContext);
 
+  const { data, isLoading, error } = useSWR(
+    `/api/getCoffeeStoreById?id=${query.id}`,
+    fetcher
+  );
+
   const handleCreateCoffeeStore = useCallback(async coffeeStoreData => {
     try {
-      const response = await fetch('/api/createCoffeeStore', {
+      await fetch('/api/createCoffeeStore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...coffeeStoreData, voting: 0 }),
       });
-
-      const data = await response.json();
-      console.log(data);
     } catch (error) {
       console.error('Error creating coffee store');
       console.error(error);
@@ -34,6 +41,10 @@ export default function CoffeeStore(initialProps) {
   }, []);
 
   useEffect(() => {
+    const { coffeeStore } = initialProps;
+
+    if (!coffeeStore) return;
+
     if (isEmpty(coffeeStore) && state.coffeeStores.length > 0) {
       const coffeeStore = state.coffeeStores.find(
         coffeeStore => coffeeStore.id === query.id
@@ -44,23 +55,46 @@ export default function CoffeeStore(initialProps) {
       setCoffeeStore(coffeeStore);
       handleCreateCoffeeStore(coffeeStore);
     } else {
-      handleCreateCoffeeStore(initialProps.coffeeStore);
+      handleCreateCoffeeStore(coffeeStore);
     }
-  }, [
-    coffeeStore,
-    handleCreateCoffeeStore,
-    initialProps.coffeeStore,
-    query.id,
-    state.coffeeStores,
-  ]);
+  }, [handleCreateCoffeeStore, initialProps, query.id, state.coffeeStores]);
 
-  if (isFallback) return <div>Loading...</div>;
+  useEffect(() => {
+    if (!data) return;
+
+    const { data: coffeeStoreData } = data;
+
+    if (coffeeStoreData && coffeeStoreData.length > 0) {
+      const coffeeStore = coffeeStoreData[0];
+      setVotingCount(coffeeStore.voting);
+      setCoffeeStore(coffeeStore);
+    }
+  }, [data]);
+
+  if (isFallback || isLoading) return <div>Loading...</div>;
 
   const { name, address, neighborhood, imgUrl } = coffeeStore;
 
-  const upvoteBtnHandler = () => {
-    console.log('handle upvote');
+  const upvoteBtnHandler = async () => {
+    try {
+      const response = await fetch('/api/favoriteCoffeeStoreById', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: query.id }),
+      });
+
+      const data = await response.json();
+
+      if (!data && !data.data.length > 0) return;
+
+      setVotingCount(prevCount => prevCount + 1);
+    } catch (error) {
+      console.error('Error upvoting coffee store');
+      console.error(error);
+    }
   };
+
+  if (error) return <div>Something went wrong!</div>;
 
   return (
     <Fragment>
@@ -108,7 +142,7 @@ export default function CoffeeStore(initialProps) {
               height={24}
               alt="upvote-icon"
             />
-            <p>1</p>
+            <p>{votingCount}</p>
           </div>
           <button className={styles['upvote-btn']} onClick={upvoteBtnHandler}>
             Up vote!
